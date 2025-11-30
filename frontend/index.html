@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Face Attendance System</title>
+    <style>
+        body { font-family: Arial; padding: 30px; }
+        button { padding: 12px; margin: 10px; font-size: 18px; }
+        input { padding: 10px; font-size: 18px; }
+        #output { margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+    <h1>Face Attendance System</h1>
+
+    <h3>Register New User</h3>
+    <input id="nameInput" placeholder="Enter Name" />
+    <button onclick="registerUser()">Register</button>
+
+    <h3>Attendance Controls</h3>
+    <button onclick="startAttendance()">Start Attendance</button>
+    <button onclick="stopAttendance()">Stop Attendance</button>
+
+    <h3>View Attendance</h3>
+    <button onclick="getAttendance()">Load Attendance</button>
+
+    <div id="output"></div>
+
+<script>
+    const API = "http://localhost:5000";
+
+    function registerUser() {
+        let name = document.getElementById("nameInput").value;
+
+        fetch(API + "/register", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({name})
+        })
+        .then(r => r.json())
+        .then(d => alert(d.status));
+    }
+
+    function startAttendance() {
+        fetch(API + "/start-attendance", { method: "POST" })
+        .then(r => r.json())
+        .then(d => alert(d.status));
+    }
+
+    function stopAttendance() {
+        fetch(API + "/stop-attendance", { method: "POST" })
+        .then(r => r.json())
+        .then(d => alert(d.status));
+    }
+
+    function getAttendance() {
+        fetch(API + "/attendance")
+        .then(r => r.json())
+        .then(data => {
+            let html = "<h3>Today's Attendance</h3>";
+            data.forEach(row => {
+                html += `<p>${row.Name} - ${row.Time}</p>`;
+            });
+            document.getElementById("output").innerHTML = html;
+        });
+    }
+</script>
+
+</body>
+</html>
